@@ -60,10 +60,9 @@ for tc in range(1, T+1):
             if i == 0:
                 cnt = 0
                 curr = N # 현재 위치를 종점으로
+        d = 1 # 디버깅시 실행코드가 없는 경우 dummy code를 중단점으로 활용
     print(f'#{tc} {cnt}')
         
-
-
 
 
 

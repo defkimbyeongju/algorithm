@@ -13,3 +13,4 @@ for tc in range(1, T+1):
 
     diff = max_val - min_val
     print(f'#{tc} {diff}')
+

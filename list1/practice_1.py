@@ -44,17 +44,48 @@
 
 
 
-def money(n, coins):
-    coins.sort(reverse=True)
-    change = {coin : 0 for coin in coins}
-    for coin in coins:
-        while n >= coin:
-            n -= coin
-            change[coin] += 1
-    return change
+# def money(n, coins):
+#     coins.sort(reverse=True)
+#     change = {coin : 0 for coin in coins}
+#     for coin in coins:
+#         while n >= coin:
+#             n -= coin
+#             change[coin] += 1
+#     return change
+#
+# result = money(380, [100, 50, 10])
+#
 
-result = money(380, [100, 50, 10])
 
 
+# T = int(input())
+# for tc in range(1, T+1):
+#     N = int(input())
+#     numbers = list(map(int, input()))
+#     arr = [0] * 10
+#     max_v = 0
+#     max_idx = 0
+#     for i in numbers:
+#         arr[i] += 1
+#     for j in range(len(arr)):
+#         if max_v < arr[j]:
+#             max_v = arr[j]
+#             max_idx = j
+#         elif max_v == arr[j]:
+#             max_idx = j
+#     print(f'#{tc} {max_idx} {max_v}')
+#
 
-
+T = int(input())
+for tc in range(1, T+1):
+    N = int(input())
+    arr = list(map(int, input().split()))
+    new_arr = []
+    for i in range(N):
+        if i % 2 == 0:
+            new_arr.append(max(arr))
+            arr.remove(max(arr))
+        else:
+            new_arr.append(min(arr))
+            arr.remove(min(arr))
+    print(f'#{tc}', *new_arr[:10])

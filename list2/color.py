@@ -19,20 +19,38 @@ for tc in range(1, T+1):
     print(f'#{tc} {result}')
 '''
 
-T = int(input())
+# T = int(input())
 
-for tc in range(1, T+1):
-    N = int(input())
-    # 10x10 격자 생성
+# for tc in range(1, T+1):
+#     N = int(input())
+#     # 10x10 격자 생성
+#     arr = [[0]*10 for _ in range(10)]
+#     result = 0
+#     for k in range(N):
+#         r1, b1, r2, b2, color = map(int, input().split())# 칠할 영역에 대한 값을 3번 입력 받음
+#         for i in range(r1, r2+1):
+#             for j in range(b1, b2+1):
+#                 arr[i][j] += color
+#                 if arr[i][j] == 3:
+#                     result += 1
+#     print(f'#{tc} {result}')
+
+
+T = int(input())
+for tc in range(1,T+1):
     arr = [[0]*10 for _ in range(10)]
+    N = int(input())
     result = 0
-    for k in range(N):
-        r1, b1, r2, b2, color = map(int, input().split())# 칠할 영역에 대한 값을 3번 입력 받음
-        for i in range(r1, r2+1):
-            for j in range(b1, b2+1):
+    for _ in range(N):
+        a, b, c, d, color = map(int, input().split())        
+        for i in range(a, c+1):
+            for j in range(b, d+1):
                 arr[i][j] += color
                 if arr[i][j] == 3:
                     result += 1
     print(f'#{tc} {result}')
+            
+    
+
 
 

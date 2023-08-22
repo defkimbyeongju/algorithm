@@ -38,26 +38,97 @@
 
 # 백준 2839 설탕 배달
 
-n = int(input())
-def sugar(n):
-    dp = [0]*(n+1)
-    dp[3] = 1
-    dp[4] = -1
-    dp[5] = 1
-    dp[6] = 2
-    dp[7] = -1
-    dp[8] = 2
-    if n > 9:
-        for i in range(9, n+1):
-            if dp[i-3] == -1 and dp[i-5] == -1:
-                dp[i] = -1
-            elif dp[i-3] == -1 and dp[i-5] != -1:
-                dp[i] = dp[i-5]+1
-            elif dp[i-3] != -1 and dp[i-5] == -1:
-                dp[i] = dp[i-3]+1
-            else:
-                dp[i] = min(dp[i-3], dp[i-5])+1
+# n = int(input())
+# def sugar(n):
+#     dp = [0]*(n+1)
+#     dp[3] = 1
+#     dp[4] = -1
+#     dp[5] = 1
+#     dp[6] = 2
+#     dp[7] = -1
+#     dp[8] = 2
+#     if n > 9:
+#         for i in range(9, n+1):
+#             if dp[i-3] == -1 and dp[i-5] == -1:
+#                 dp[i] = -1
+#             elif dp[i-3] == -1 and dp[i-5] != -1:
+#                 dp[i] = dp[i-5]+1
+#             elif dp[i-3] != -1 and dp[i-5] == -1:
+#                 dp[i] = dp[i-3]+1
+#             else:
+#                 dp[i] = min(dp[i-3], dp[i-5])+1
+#
+#     return dp[n]
+#
+# print(sugar(n))
 
-    return dp[n]
 
-print(sugar(n))
+# 백준 1389 케빈 베이컨
+
+# def bfs(s,g):
+#     queue = []
+#     visited = [0]*(N+1)
+#     queue.append(s)
+#     visited[s] = 1
+#     while queue:
+#         t = queue.pop(0)
+#         if t == g:
+#             return visited[t]-1
+#         for i in arr[t]:
+#             if visited[i] == 0:
+#                 visited[i] = visited[t]+1
+#                 queue.append(i)
+#
+# N,M = map(int, input().split())
+# arr = [[] for _ in range(N+1)]
+# for _ in range(M):
+#     a,b = map(int, input().split())
+#     arr[a].append(b)
+#     arr[b].append(a)
+# min_v = 21e8
+# for i in range(1,N+1):
+#     total = 0
+#     for j in range(1, N+1):
+#         total += bfs(i, j)
+#     if min_v > total:
+#         min_v = total
+#         minimum = [i]
+#     elif min_v == total:
+#         minimum.append(i)
+#
+# print(minimum[0])
+
+
+# 백준 7576 토마토
+def bfs(queue):
+    dir = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    while queue:
+        i, j = queue.pop(0)
+        for y, x in dir:
+            ny, nx = y+i, x+j
+            if 0<=ny<N and 0<=nx<M:
+                if arr[ny][nx] == 0:
+                    arr[ny][nx] = 1
+                    visited[ny][nx] = visited[i][j] + 1
+                    queue.append((ny,nx))
+
+M,N = map(int, input().split())
+arr = [list(map(int, input().split())) for _ in range(N)]
+queue = []
+visited = [[0]*M for _ in range(N)]
+
+if 0 not in sum(arr, []):
+    result = 0
+else:
+    for i in range(N):
+        for j in range(M):
+            if arr[i][j] == 1:
+                queue.append((i,j))
+                visited[i][j] = 1
+    bfs(queue)
+    if 0 in sum(arr,[]):
+        result = -1
+    else:
+        result = max(sum(visited, []))-1
+
+print(result)

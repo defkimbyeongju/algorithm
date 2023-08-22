@@ -123,44 +123,4 @@ for tc in range(1,T+1):
     print(f'#{tc} {sum(visited)}')
 '''
 
-T = int(input())
-for tc in range(1,T+1):
-    N = int(input())
-    arr = list(map(int, input().split()))
-    idx_lst = [i for i in range(N)]
-    abcd = []
-    max_v = 0
-    for i in idx_lst:
-        idx_lst2 = idx_lst.copy()
-        if i == 0:
-            idx_lst2.remove(N-1)
-        else:
-            idx_lst2.remove(i-1)
-        if i == N-1:
-            idx_lst2.remove(0)
-        else:
-            idx_lst2.remove(i+1)
-        idx_lst2.remove((i+2//N)%N)
-        for j in idx_lst2:
-            idx_lst3 = idx_lst2.copy()
-            if j-1 in idx_lst3:
-                idx_lst3.remove(j-1)
-            if j+1 in idx_lst3:
-                idx_lst3.remove(j+1)
-            for k in idx_lst3:
-                idx_lst4 = idx_lst3.copy()
-                if k-1 in idx_lst4:
-                    idx_lst4.remove(k-1)
-                if k+1 in idx_lst4:
-                    idx_lst4.remove(k+1)
-                for p in idx_lst4:
-                    abcd.append((i,j,k,p))
-    for a,b,c,d in abcd:
-        tmp = (arr[a]+arr[b])**2 + (arr[c]+arr[d])**2
-        if max_v < tmp:
-            max_v = tmp
-
-    print(f'#{tc} {max_v}')
-
-
 

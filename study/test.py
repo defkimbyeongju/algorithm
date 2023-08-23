@@ -100,35 +100,71 @@
 
 
 # 백준 7576 토마토
-def bfs(queue):
-    dir = [(0, 1), (1, 0), (0, -1), (-1, 0)]
-    while queue:
-        i, j = queue.pop(0)
-        for y, x in dir:
-            ny, nx = y+i, x+j
-            if 0<=ny<N and 0<=nx<M:
-                if arr[ny][nx] == 0:
-                    arr[ny][nx] = 1
-                    visited[ny][nx] = visited[i][j] + 1
-                    queue.append((ny,nx))
+# def bfs(queue):
+#     dir = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+#     while queue:
+#         i, j = queue.popleft()
+#         for y, x in dir:
+#             ny, nx = y+i, x+j
+#             if 0<=ny<N and 0<=nx<M:
+#                 if arr[ny][nx] == 0:
+#                     arr[ny][nx] = 1
+#                     visited[ny][nx] = visited[i][j] + 1
+#                     queue.append((ny,nx))
+#
+# from collections import deque
+# M,N = map(int, input().split())
+# arr = [list(map(int, input().split())) for _ in range(N)]
+# queue = deque()
+# visited = [[0]*M for _ in range(N)]
+#
+# if 0 not in sum(arr, []):
+#     result = 0
+# else:
+#     for i in range(N):
+#         for j in range(M):
+#             if arr[i][j] == 1:
+#                 queue.append((i,j))
+#                 visited[i][j] = 1
+#     bfs(queue)
+#     if 0 in sum(arr,[]):
+#         result = -1
+#     else:
+#         result = max(sum(visited, []))-1
+#
+# print(result)
 
-M,N = map(int, input().split())
+# 백준 16926 배열돌리기1
+
+N,M,R = map(int, input().split())
 arr = [list(map(int, input().split())) for _ in range(N)]
-queue = []
-visited = [[0]*M for _ in range(N)]
+mini = min(N,M)//2
 
-if 0 not in sum(arr, []):
-    result = 0
-else:
-    for i in range(N):
-        for j in range(M):
-            if arr[i][j] == 1:
-                queue.append((i,j))
-                visited[i][j] = 1
-    bfs(queue)
-    if 0 in sum(arr,[]):
-        result = -1
-    else:
-        result = max(sum(visited, []))-1
-
-print(result)
+for _ in range(R):
+    for i in range(mini):
+        x, y = i, i
+        temp = arr[x][y]
+        for j in range(i+1, N-i): # 좌
+            x = j
+            prev_value = arr[x][y]
+            arr[x][y] = temp
+            temp = prev_value
+        for k in range(i+1, M-i): # 하
+            y = k
+            prev_value = arr[x][y]
+            arr[x][y] = temp
+            temp = prev_value
+        for l in range(i+1, N-i): # 우
+            x = N-l-1
+            prev_value = arr[x][y]
+            arr[x][y] = temp
+            temp = prev_value
+        for m in range(i+1, M-i): # 상
+            y = M-m-1
+            prev_value = arr[x][y]
+            arr[x][y] = temp
+            temp = prev_value
+for i in range(N):
+    for j in range(M):
+        print(arr[i][j], end=' ')
+    print()

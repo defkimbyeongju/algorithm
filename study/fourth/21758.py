@@ -1,29 +1,20 @@
+import sys
+
+input = sys.stdin.readline
+
 N = int(input())
 honey = list(map(int, input().split()))
-idx = [i for i in range(N)]
-idx_lst =
-start_1 =
-start_2 =
-goal =
+honey_sum = [honey[0]]
+for i in range(1,N):
+    honey_sum.append(honey_sum[i-1]+honey[i])
 
-if start_1 > goal:
-    for i in range(start_1-1, goal-1, -1):
-        if i == start_2:
-            continue
-        total += honey[i]
-else:
-    for i in range(start_1+1, goal+1):
-        if i == start_2:
-            continue
-        total += honey[i]
+result = 0
+for i in range(1,N-1):
+    result = max(result, (honey_sum[N-1]*2)-honey[0]-honey_sum[i]-honey[i])
 
-if start_2 > goal:
-    for i in range(start_2-1, goal-1, -1):
-        if i == start_1:
-            continue
-        total += honey[i]
-else:
-    for i in range(start_2+1, goal+1):
-        if i == start_1:
-            continue
-        total += honey[i]
+for i in range(1,N-1):
+    result = max(result, honey_sum[N-2]-honey[i]+honey_sum[i-1])
+for i in range(1,N-1):
+    result = max(result, honey_sum[N-2]-honey[0]+honey[i])
+
+print(result)

@@ -46,47 +46,62 @@ for tc in range(1, T + 1):
     print(f'#{tc} {min_v}')
 '''
 
-from collections import deque
-
-def bfs(r,c):
-    dir = [(1,0),(0,1),(-1,0),(0,-1)]
-    visited[r][c] = 0 # 시작지점 연료소비량 0 초기화
-    queue = deque()
-    queue.append((r,c))
-    while queue: # 큐에 노드가 있으면 계속 탐색
-        r, c = queue.popleft()
-        if (r,c) in tunnel_start:
-            idx = tunnel_start.index((r,c))
-            nr, nc = tunnel[idx][2], tunnel[idx][3]
-            val = 0
-            if arr[r][c] < arr[nr][nc]:
-                val = arr[nr][nc] - arr[r][c]
-            # 2. 이동하려는 위치의 연료 소비량 갱신
-            if visited[r][c] + 1 + val < visited[nr][nc]:
-                visited[nr][nc] = visited[r][c] + 1 + val
-                queue.append((nr-1, nc-1))
+import heapq
+dir = [(0,1),(1,0),(0,-1),(-1,0)]
+def dijkstra(si,sj):
+    distance[si][sj] = 0
+    pq = [(0,si,sj)]
+    while pq:
+        dist, sy, sx = heapq.heappop(pq)
+        if distance[sy][sx] < dist:
+            continue
+        # sy,sx가 터널 시작점인지 체크
+        if_tunnel = tunnel_check(sy,sx)
+        if if_tunnel:
+            ny, nx, fuel = if_tunnel[0], if_tunnel[1], if_tunnel[2]
+            new_cost = dist + fuel
+            if distance[ny][nx] > new_cost:
+                distance[ny][nx] = new_cost
+                heapq.heappush(pq, (new_cost,ny,nx))
         else:
-            for dr, dc in dir:
-                nr, nc = r+dr, c+dc
-                # 이동 가능한 범위 내에 있을 때
-                if 0<=nr<N and 0<=nc<N:
-                    val = 0
-                    # 1. 현재 지점보다 높은 지역으로 이동할 때 높이 차이
-                    if arr[r][c] < arr[nr][nc]:
-                        val = arr[nr][nc] - arr[r][c]
-                    # 2. 이동하려는 위치의 연료 소비량 갱신
-                    if visited[r][c] + 1 + val < visited[nr][nc]:
-                        visited[nr][nc] = visited[r][c] + 1+ val
-                        queue.append((nr-1,nc-1))
-    return visited[N-1][N-1]
+            for y,x in dir:
+                ny, nx = sy+y, sx+x
+                if 0<=ny<N and 0<=nx<N and (ny,nx) not in in_tunnel:
+                    # 다음 칸의 높이(더 큼, 같음, 더 작음)에 따라 distance가 달라짐
+                    if arr[ny][nx] > arr[sy][sx]:
+                        new_cost = dist + (arr[ny][nx]-arr[sy][sx])*2
+                    elif arr[ny][nx] == arr[sy][sx]:
+                        new_cost = dist + 1
+                    else:
+                        new_cost = dist
+                    if distance[ny][nx] > new_cost:
+                        distance[ny][nx] = new_cost
+                        heapq.heappush(pq,(new_cost,ny,nx))
+    return distance[N-1][N-1]
+
+def tunnel_check(i,j):
+    for idx in range(M):
+        if i+1 == tunnel[idx][0] and j+1 == tunnel[idx][1]:
+            return [tunnel[idx][2]-1, tunnel[idx][3]-1, tunnel[idx][4]]
+    return False
+
 
 T = int(input())
 for tc in range(1,T+1):
-    N,M = map(int,input().split())
+    N, M = map(int,input().split())
     arr = [list(map(int, input().split())) for _ in range(N)]
     tunnel = [list(map(int, input().split())) for _ in range(M)]
     tunnel.sort(key=lambda x:x[4])
-    tunnel_start = [(i,j) for i,j,a,b,c in tunnel]
-    visited = [[float('inf')]*N for _ in range(N)]
-    result = bfs(0,0)
-    print(f'#{tc} {result}')
+    in_tunnel = set()
+    for i in range(M):
+        if tunnel[i][0] == tunnel[i][2]:  # y좌표가 같은 수평 터널일 때
+            for k in range(1, tunnel[i][3]-tunnel[i][1]):
+                in_tunnel.add((tunnel[i][0]-1, tunnel[i][1]-1+k))
+        elif tunnel[i][1] == tunnel[i][3]:  # x좌표가 같은 수직 터널일 때
+            for k in range(1, tunnel[i][2] - tunnel[i][0]):
+                in_tunnel.add((tunnel[i][0]-1+k, tunnel[i][1]-1))
+        else:
+            for k in range(1, tunnel[i][3] - tunnel[i][1]):
+                in_tunnel.add((tunnel[i][0]-1+k, tunnel[i][1]-1+k))
+    distance = [[float('inf')]*N for _ in range(N)]
+    print(f'#{tc} {dijkstra(0,0)}')

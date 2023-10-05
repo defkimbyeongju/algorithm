@@ -25,7 +25,7 @@ def remain_chicken(used, M, start):
             used[i] = 0
 '''
 
-
+# 남겨둘 치킨집을 조합으로 정하기. 완전 탐색 기법 적용
 def combinations(arr, k):
     def backtrack(start, current_combination):
         if len(current_combination) == k:
@@ -46,20 +46,20 @@ arr = [list(map(int, sys.stdin.readline().split())) for _ in range(N)]
 houses = []
 chickens = []
 min_chicken = 1e9
-for i in range(N):
+for i in range(N): # house와 chicken 리스트에 좌표 추가
     for j in range(N):
         if arr[i][j] == 1:
             houses.append((i,j))
         elif arr[i][j] == 2:
             chickens.append((i,j))
-res = combinations(chickens, M)
+res = combinations(chickens, M) # 조합으로 구한 M개의 치킨 가게가 남아 있는 경우의 수를 res 리스트에 저장하고 결과 계산
 result = 1e9
-for i in range(len(res)):
+for i in range(len(res)): # 가능한 조합의 수만큼 반복
     total = 0
-    for hy, hx in houses:
+    for hy, hx in houses: # 각 집에서 가장 가까운 치킨집을 구함
         temp = 1e9
         for j in range(M):
             temp = min(temp, abs(res[i][j][0] - hy) + abs(res[i][j][1] - hx))
-        total += temp
-    result = min(result, total)
+        total += temp # 각 집의 좌표별로 가장 가까운 치킨집과의 거리를 더해줌.
+    result = min(result, total) # 최소값을 계속 갱신해주기
 print(result)

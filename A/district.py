@@ -33,14 +33,41 @@ def check_adj(arr):  # 각 마을끼리 인접해 있는지 확인하고 값을 
     for p in range(len(arr)):
         visited = [0] * N
         for i in range(2):
+            used = [0] * N
             if len(arr[p][i]) == 1: # 길이가 1이라면 자기 혼자만 포함되기 때문에 방문 표시
                 visited[arr[p][i][0]] = 1
             else:
-                for j in range(len(arr[p][i])): # arr[p][i] ex) [[0], [1,2,3]] 에서 [1,2,3]
-                    for k in range(N): # adj_arr 한 행의 길이는 N이기 때문에
-                        if adj_arr[arr[p][i][j]][k] == 1 and visited[k] == 0 and k in arr[p][i]: # 인접 체크가 되어 있고, 아직 방문하지 않았고, k가 같은 그룹에 해당하면
-                                visited[k] = 1
-        if sum(visited) == N: # visited로 인접 여부 확인
+                queue = [arr[p][i][0]]
+                used[arr[p][i][0]] = 1
+                while queue: # 첫번째 좌표에서 쭉 해서 갈 수 있는 곳 구해서 used에 체크
+                    t = queue.pop()
+                    for idx in range(N):
+                        if adj_arr[t][idx] == 1 and used[idx] == 0 and visited[idx] == 0:
+                            used[idx] = 1
+                            queue.append(idx)
+                for a in range(len(arr[p][i])):
+                    if used[arr[p][i][a]] == 1:
+                        visited[arr[p][i][a]] = 1
+
+        if sum(visited) == N: # visited로 인접 여부 확인하고 뒤집어서도 한 번 진행
+            visited = [0] * N
+            for i in range(1, -1, -1):
+                used = [0] * N
+                if len(arr[p][i]) == 1:  # 길이가 1이라면 자기 혼자만 포함되기 때문에 방문 표시
+                    visited[arr[p][i][0]] = 1
+                else:
+                    queue = [arr[p][i][0]]
+                    used[arr[p][i][0]] = 1
+                    while queue:  # 첫번째 좌표에서 쭉 해서 갈 수 있는 곳 구해서 used에 체크
+                        t = queue.pop()
+                        for idx in range(N):
+                            if adj_arr[t][idx] == 1 and used[idx] == 0 and visited[idx] == 0:
+                                used[idx] = 1
+                                queue.append(idx)
+                    for a in range(len(arr[p][i])):
+                        if used[arr[p][i][a]] == 1:
+                            visited[arr[p][i][a]] = 1
+        if sum(visited) == N: # 뒤집어서도 충족하면
             res = sum_district(arr[p])
             if min_v > res:
                 min_v = res

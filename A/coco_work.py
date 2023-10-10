@@ -1,95 +1,53 @@
-# T = int(input())
-# for tc in range(1,T+1):
-#     N = int(input())
-#     work_list = []
-#     priority = []
-#     for _ in range(N):
-#         temp = list(map(int,input().split()))
-#         work_list.append(temp[0])
-#         priority.append([temp[1:]])
-#     print(work_list, priority)
+import copy
+def work(arr, primary):
+    global min_v
+    for i in range(N):
+        work_time = 0
+        temp_arr = arr[:]
+        temp_arr[i] //= 2
+        used = [0] * N
+        prima = copy.deepcopy(primary)
+        while True: # 각각의 업무를 코코가 도와준다고 미리 가정하고 업무 시작!
+            min_time = 1001
+            for j in range(N):
+                if prima[j]: # 사전업무가 있다면
+                    for k in range(len(prima[j])):
+                        if used[prima[j][k]-1] != -1: # 사전 업무가 안됐다면 얘는 지금 수행 못하니까 넘겨
+                            break
+                    else: # for - else 문은 break되지 않고 넘어감. 사전업무가 모두 수행됐다면
+                        for _ in range(len(prima[j])):
+                            prima[j].pop()
+                if not prima[j] and temp_arr[j] != 0:
+                    used[j] = 1
+                    min_time = min(min_time, temp_arr[j])
+            if min_time == 1001:
+                break
+            else:
+                work_time += min_time
+            for idx in range(N):
+                if used[idx] == 1:
+                    temp_arr[idx] -= min_time
+                    if temp_arr[idx] == 0:
+                        used[idx] = -1
 
-def func(idx):
-    global flag
-    # cycle이 발생했다 -> 처리가 불가능한 업무의 순환이다
-    if flag == 1:
-        return -1
-        # idx번 업무에 대해 처리가 이미 되었다면 다시 들어가지 말고 정답을 return
-    if dp[idx] != 0:
-        return dp[idx]
-        # 만약 하위 업무가 없다면 -> dp에 기록하고 return
-    if len(pre[idx]) == 0:
-        dp[idx] = worktime[idx]
-        return dp[idx]
-
-    maxtime = 0
-    # idx번 업무에 연결된 하위 업무들을 확인
-    for i in range(len(pre[idx])):
-        next = pre[idx][i]
-        # cycle이 발생했다 -> 처리가 부가능한 업무의 순환이다.
-        if visited[next] == 1:
-            flag = 1
-            return -1
-        # 이 업무를 진행한다!
-        visited[next] = 1
-        # 다음 업무로 들어간다 (하위 업무)
-        temp = func(next)
-        # next번 업무를 끝내기까지 걸리는 하위 업무들의 최장 기간을 기록
-        if temp > maxtime:
-            maxtime = temp
-            # 복구 (다른 순서로 해결하면 더 빨라질 수도 있으니)
-        visited[next] = 0
-
-        # idx업무를 진행하면 하위 업무들을 끝내기 위해 필요한 시간 + idx 번 업무를 끝내는 시간 소요
-    dp[idx] = maxtime + worktime[idx]
-    return dp[idx]
+        if 0 not in used:
+            min_v = min(min_v, work_time)
+        else:
+            break
 
 
 T = int(input())
-for tc in range(1, T + 1):
-    # input
+for tc in range(1,T+1):
     N = int(input())
-    worktime = [0]  # 1번 업부무터 넣을수 있도록 일단 0 하나 투입 (의미 없음)
-    pre = [[] for _ in range(N + 1)]  # 1~N번까지 그래프 생성
-    for i in range(N):
-        info = list(map(int, input().split()))  # 정보 한줄 입력
-        worktime.append(info.pop(0))  # 맨 앞의 값이 i+1번째 시간
-        M = info.pop(0)  # 다음이 i+1번째 업무에 대한 사전 업무들
-        for j in range(M):
-            prenum = info.pop(0)  # 앞에서부터 순서대로 빼서
-            pre[i + 1].append(prenum)  # i + 1번재의 선행 업무로 투입
-
-    # solve
-    ans = 21e8
-    for i in range(1, N + 1):
-        dp = [0 for _ in range(N + 1)]
-        flag = 0
-        res = 0  # j번 업무까지를 마쳤을때의 시간
-
-        # i번 업무에 코코를 투입
-        original = worktime[i]
-        worktime[i] //= 2
-        for j in range(1, N + 1):
-            # j번 업무부터 시작
-            visited = [0 for _ in range(N + 1)]
-            visited[j] = 1
-            # j번 업무의 하위 업무 처리
-            temp = func(j)
-            # 만약 j번을 처리하는데에 기존 시간보다 더 넘어갔다면 -> 이때까지 업무를 해야 한다 -> 갱신
-            if temp > res:
-                res = temp
-            # 만약 비정상적인 업무 순환이 생긴다면 -> -1
-            if flag == 1:
-                ans = -1
-                break
-
-                # 코코를 투입했던 기존 시간을 복구
-        worktime[i] = original
-        # 비정상적인 업무 순환 -> -1
-        if flag == 1:
-            break
-            # 최종적으로 i번 업무에 코코를 투입했을때 모든 업무를 끝내기까지의 시간을 갱신 (최소)
-        else:
-            ans = min(ans, res)
-    # output
-    print(f"#{tc} {ans}")
+    work_list = []
+    priority = []
+    for _ in range(N):
+        temp = list(map(int,input().split()))
+        work_list.append(temp[0])
+        priority.append(temp[2:])
+    min_v = 21e8
+    work(work_list, priority)
+    if min_v == 21e8:
+        print(f'#{tc} -1')
+    else:
+        print(f'#{tc} {min_v}')

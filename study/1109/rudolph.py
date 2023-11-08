@@ -1,3 +1,5 @@
+
+# 충돌이 발생했을 때, 밀려난 위치에 또 다른 산타가 있다면 실행
 def move(y,x,dy,dx,value):
     santa = arr[y][x]
     ny = y + dy
@@ -33,7 +35,7 @@ for _ in range(M):
             continue
         temp = (Ry - santa_loc[i][0]) ** 2 + (Rx - santa_loc[i][1]) ** 2
         distance[i] = [temp, santa_loc[i][0],santa_loc[i][1], i] # 거리, y좌표, x좌표, 인덱스
-    distance.sort(key=lambda x:(x[0], -x[1], -x[2]))
+    distance.sort(key=lambda x:(x[0], -x[1], -x[2])) # 우선 순위에 따라 정렬해주기
     # 좌표 차이로 다음 방향 정해주기
     if Ry == distance[0][1]:
         dy = 0
@@ -47,7 +49,7 @@ for _ in range(M):
         dx = -1
     else:
         dx = 1
-    # 방향 이동
+    # 루돌프 이동
     Ry += dy
     Rx += dx
     # 루돌프가 이동해서 산타 만나면 산타 튕겨져 나가기
@@ -85,15 +87,22 @@ for _ in range(M):
             continue
         y,x = santa_loc[i][0], santa_loc[i][1]
         dist = (Ry-y) ** 2 + (Rx-x) ** 2
+        dir = [(-1,0), (0,1), (1,0), (0,-1)]
+        min_dist = 21e8 # 최소 거리
+        min_idx = -1 # 인덱스
         # 상,우,하,좌 순서
-        for dy,dx in [(-1,0), (0,1), (1,0), (0,-1)]:
-            ny,nx = y+dy, x+dx
+        for idx in range(4):
+            ny,nx = y+dir[idx][0], x+dir[idx][1]
             if 0<=ny<N and 0<=nx<N: # 범위 안에 들어오고
-                if (ny-y) ** 2 + (nx-x) ** 2 < dist: # 거리가 더 가까워지며
-                    if arr[ny][nx] == 0: # 해당 칸이 비어있으면
-                        arr[y][x] = 0
-                        arr[ny][nx] = i+1
-                        break # 움직였으면 끝!
+                temp_dist = (ny-y) ** 2 + (nx-x) ** 2
+                if temp_dist < dist and arr[ny][nx] == 0: # 거리가 더 가까워지고, 해당 칸이 비어있다면
+                    min_dist = min(min_dist, temp_dist)
+                    min_idx = idx
+
+                    # if arr[ny][nx] == 0: # 해당 칸이 비어있으면
+                    #     arr[y][x] = 0
+                    #     arr[ny][nx] = i+1
+                    #     continue # 움직였으면 끝!
                     elif arr[ny][nx] == -1: # 루돌프랑 충돌한다면
                         arr[y][x] = 0 # 산타 위치 초기화
                         santa_loc[i][2] += D
